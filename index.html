@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram DM自動応答設定</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+
+        .step-number {
+            background: #6b46c1;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .step-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .radio-item.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3b82f6;
+        }
+
+        .radio-item .label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .radio-item .description {
+            color: #666;
+            font-size: 12px;
+            margin-left: 24px;
+            margin-top: 4px;
+        }
+
+        .keyword-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .keyword-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .keyword-input:disabled {
+            background-color: #f3f4f6;
+            color: #9ca3af;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 12px;
+            accent-color: #3b82f6;
+        }
+
+        .message-section {
+            background: #f8f9fa;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .message-section.has-content {
+            background: white;
+            border: 2px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .empty-message {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .button {
+            padding: 10px 16px;
+            border: 2px solid #3b82f6;
+            border-radius: 6px;
+            background: white;
+            color: #3b82f6;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.2s;
+        }
+
+        .button:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .button.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: #2563eb;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 24px;
+        }
+
+        .message-preview {
+            background: #f3f4f6;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .message-preview .trigger {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .message-preview .content {
+            font-weight: 500;
+        }
+
+        .textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .timing-select {
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .timing-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-right: 8px;
+        }
+
+        .current-responses {
+            margin-bottom: 20px;
+        }
+
+        .response-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .response-trigger {
+            font-size: 12px;
+            color: #3b82f6;
+            background: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .delete-btn {
+            color: #ef4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>自動応答設定</h1>
+            <p class="subtitle">Instagram DMの自動返信メッセージを設定できます</p>
+        </div>
+
+        <div class="card">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">キーワードの設定</h3>
+                    <p class="step-description">自動応答の稼働条件となるキーワードを指定できます。</p>
+                    
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <div class="radio-item selected" onclick="selectTriggerType('all')">
+                                <input type="radio" name="trigger" value="all" checked>
+                                <div>
+                                    <div class="label">全てのコメントに反応</div>
+                                    <div class="description">※除外ワードを設定可能</div>
+                                </div>
+                            </div>
+                            <div class="radio-item" onclick="selectTriggerType('keyword')">
+                                <input type="radio" name="trigger" value="keyword">
+                                <div>
+                                    <div class="label">キーワードを指定</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="keywordInput" style="display: none;">
+                        <label class="form-label">反応するキーワード（カンマ区切りで複数指定可能）</label>
+                        <input type="text" class="keyword-input" id="triggerKeywords" placeholder="例：こんにちは,hello,質問">
+                    </div>
+
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="excludeWords">
+                        <label for="excludeWords">除外ワードを設定する</label>
+                        <div class="description">設定されたキーワード以外のコメント全てに稼働します。</div>
+                    </div>
+
+                    <div class="form-group" id="excludeInput" style="display: none;">
+                        <label class="form-label">除外キーワード（カンマ区切りで複数指定可能）</label>
+                        <input type="text" class="keyword-input" id="excludeKeywords" placeholder="例：スパム,広告,宣伝">
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">絞り込み</h3>
+                    <p class="step-description">特定の条件で自動応答を絞り込むことができます。</p>
+                    
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="firstTimeOnly">
+                        <label for="firstTimeOnly">初回メッセージのみに応答</label>
+                    </div>
+                    
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="businessHoursOnly">
+                        <label for="businessHoursOnly">営業時間内のみ応答</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">アクション設定</h3>
+                    <p class="step-description">送信メッセージを設定</p>
+                    
+                    <div class="current-responses" id="currentResponses">
+                        <h4 style="margin-bottom: 12px; color: #333;">設定済みの応答メッセージ</h4>
+                        <!-- デフォルトの応答が表示される -->
+                    </div>
+
+                    <div class="message-section" id="messageSection">
+                        <div class="empty-message">メッセージが登録されていません。</div>
+                        <button class="button" onclick="showMessageForm()">メッセージを新しく作成</button>
+                        <button class="button">作成済みテンプレートから追加</button>
+                    </div>
+
+                    <div id="messageForm" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">トリガー条件</label>
+                            <select class="timing-select" id="messageCondition">
+                                <option value="hello">挨拶（hello, こんにちは）</option>
+                                <option value="help">ヘルプ（ヘルプ, help）</option>
+                                <option value="thanks">お礼（ありがとう, thanks）</option>
+                                <option value="custom">カスタム</option>
+                                <option value="default">デフォルト（その他全て）</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="customConditionInput" style="display: none;">
+                            <label class="form-label">カスタム条件（キーワード）</label>
+                            <input type="text" class="keyword-input" id="customCondition" placeholder="反応するキーワードを入力">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">返信メッセージ</label>
+                            <textarea class="textarea" id="replyMessage" placeholder="自動返信するメッセージを入力してください"></textarea>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="button" onclick="hideMessageForm()">キャンセル</button>
+                            <button class="button primary" onclick="addResponse()">追加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 class="step-title">稼働スケジュール</h3>
+                    <p class="step-description">コメントをもらってから「5分後にアクションを稼働させる」などのタイミングを設定できます。</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">アクションタイミング</label>
+                        <select class="timing-select" id="actionTiming">
+                            <option value="immediate">即時稼働</option>
+                            <option value="delay-5">5分後</option>
+                            <option value="delay-10">10分後</option>
+                            <option value="delay-30">30分後</option>
+                            <option value="delay-60">1時間後</option>
+                        </select>
+                        <div style="margin-top: 8px; color: #666; font-size: 12px;">
+                            コメントをもらってから「5分後にアクションを稼働させる」などのタイミングを設定できます。<br>
+                            「DM送信するメッセージ」でランダムを設定されている場合、パターンごとにこのタイミングは指定できません。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="button">下書き保存</button>
+            <button class="button primary" onclick="saveAndApply()">保存して次へ</button>
+        </div>
+    </div>
+
+    <script>
+        // 応答メッセージのデータ
+        let responses = [
+            { condition: 'hello', message: 'Hello! How can I help you?', trigger: '挨拶' },
+            { condition: 'こんにちは', message: 'こんにちは！何かお手伝いできることはありますか？', trigger: '挨拶' },
+            { condition: 'ヘルプ', message: 'ご質問やお困りのことがあれば、お気軽にお聞かせください！', trigger: 'ヘルプ' },
+            { condition: 'ありがとう', message: 'どういたしまして！他に何かお手伝いできることはありますか？', trigger: 'お礼' }
+        ];
+
+        // 初期表示
+        updateResponsesList();
+
+        function selectTriggerType(type) {
+            // ラジオボタンの選択状態を更新
+            document.querySelectorAll('.radio-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // 対応するラジオボタンをチェック
+            document.querySelector(`input[value="${type}"]`).checked = true;
+            
+            // キーワード入力フィールドの表示/非表示
+            const keywordInput = document.getElementById('keywordInput');
+            if (type === 'keyword') {
+                keywordInput.style.display = 'block';
+            } else {
+                keywordInput.style.display = 'none';
+            }
+        }
+
+        // 除外ワードのチェックボックス制御
+        document.getElementById('excludeWords').addEventListener('change', function() {
+            const excludeInput = document.getElementById('excludeInput');
+            if (this.checked) {
+                excludeInput.style.display = 'block';
+            } else {
+                excludeInput.style.display = 'none';
+            }
+        });
+
+        // メッセージ条件の変更時の処理
+        document.getElementById('messageCondition').addEventListener('change', function() {
+            const customInput = document.getElementById('customConditionInput');
+            if (this.value === 'custom') {
+                customInput.style.display = 'block';
+            } else {
+                customInput.style.display = 'none';
+            }
+        });
+
+        function showMessageForm() {
+            document.getElementById('messageForm').style.display = 'block';
+            document.getElementById('messageSection').style.display = 'none';
+        }
+
+        function hideMessageForm() {
+            document.getElementById('messageForm').style.display = 'none';
+            document.getElementById('messageSection').style.display = 'block';
+        }
+
+        function addResponse() {
+            const condition = document.getElementById('messageCondition').value;
+            const customCondition = document.getElementById('customCondition').value;
+            const message = document.getElementById('replyMessage').value;
+
+            if (!message.trim()) {
+                alert('返信メッセージを入力してください');
+                return;
+            }
+
+            let trigger;
+            let actualCondition;
+
+            switch(condition) {
+                case 'hello':
+                    trigger = '挨拶';
+                    actualCondition = 'hello';
+                    break;
+                case 'help':
+                    trigger = 'ヘルプ';
+                    actualCondition = 'ヘルプ';
+                    break;
+                case 'thanks':
+                    trigger = 'お礼';
+                    actualCondition = 'ありがとう';
+                    break;
+                case 'custom':
+                    if (!customCondition.trim()) {
+                        alert('カスタム条件を入力してください');
+                        return;
+                    }
+                    trigger = 'カスタム';
+                    actualCondition = customCondition;
+                    break;
+                case 'default':
+                    trigger = 'デフォルト';
+                    actualCondition = 'default';
+                    break;
+            }
+
+            // 応答を追加
+            responses.push({
+                condition: actualCondition,
+                message: message,
+                trigger: trigger
+            });
+
+            // リストを更新
+            updateResponsesList();
+
+            // フォームをリセット
+            document.getElementById('replyMessage').value = '';
+            document.getElementById('customCondition').value = '';
+            hideMessageForm();
+        }
+
+        function updateResponsesList() {
+            const container = document.getElementById('currentResponses');
+            let html = '<h4 style="margin-bottom: 12px; color: #333;">設定済みの応答メッセージ</h4>';
+
+            responses.forEach((response, index) => {
+                html += `
+                    <div class="response-item">
+                        <div>
+                            <div class="response-trigger">${response.trigger}</div>
+                            <div>${response.message}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteResponse(${index})">🗑️</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function deleteResponse(index) {
+            if (confirm('この応答メッセージを削除しますか？')) {
+                responses.splice(index, 1);
+                updateResponsesList();
+            }
+        }
+
+        async function saveAndApply() {
+            // 設定を収集
+            const config = {
+                triggerType: document.querySelector('input[name="trigger"]:checked').value,
+                triggerKeywords: document.getElementById('triggerKeywords').value,
+                excludeWords: document.getElementById('excludeWords').checked,
+                excludeKeywords: document.getElementById('excludeKeywords').value,
+                firstTimeOnly: document.getElementById('firstTimeOnly').checked,
+                businessHoursOnly: document.getElementById('businessHoursOnly').checked,
+                actionTiming: document.getElementById('actionTiming').value,
+                responses: responses
+            };
+
+            console.log('設定内容:', config);
+            
+            try {
+                // 実際のサーバーに設定を送信
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ 設定が正常に保存されました！\n\nInstagram DMボットの自動応答設定が更新されました。');
+                } else {
+                    alert('❌ 設定の保存に失敗しました: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error saving config:', error);
+                alert('❌ 設定の保存中にエラーが発生しました: ' + error.message);
+            }
+        }
+
+        // ページ読み込み時に現在の設定を取得
+        async function loadCurrentConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+                
+                // フォームに設定を反映
+                document.querySelector(`input[value="${config.triggerType}"]`).checked = true;
+                selectTriggerType(config.triggerType);
+                
+                document.getElementById('triggerKeywords').value = config.triggerKeywords || '';
+                document.getElementById('excludeWords').checked = config.excludeWords || false;
+                document.getElementById('excludeKeywords').value = config.excludeKeywords || '';
+                document.getElementById('firstTimeOnly').checked = config.firstTimeOnly || false;
+                document.getElementById('businessHoursOnly').checked = config.businessHoursOnly || false;
+                document.getElementById('actionTiming').value = config.actionTiming || 'immediate';
+                
+                // 除外ワード入力フィールドの表示制御
+                if (config.excludeWords) {
+                    document.getElementById('excludeInput').style.display = 'block';
+                }
+                
+                // 応答メッセージを設定
+                responses = config.responses || [];
+                updateResponsesList();
+                
+                console.log('現在の設定を読み込みました:', config);
+            } catch (error) {
+                console.error('設定の読み込みに失敗:', error);
+            }
+        }
+
+        // ページ読み込み時に設定を読み込む
+        document.addEventListener('DOMContentLoaded', loadCurrentConfig);
+    </script>
+</body>
+</html>
